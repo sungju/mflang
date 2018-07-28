@@ -25,5 +25,3 @@ beginchar ("a", 9pt#, 12pt#, 0);
   draw z5..z6{down}..z7{right}..z8;
   penlabels(1,2,3,4,5,6,7,8);
 endchar;
-
-end
