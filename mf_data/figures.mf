@@ -1,0 +1,823 @@
+def clear_all = clearit; clearxy; pickup standardpen;
+proofrulethickness 0;
+enddef;
+
+def heavy_dot expr z =
+ makelabel.top("",z-(1,0));
+ makelabel.top("",z+(1,0));
+ makelabel.top("",z-(0,1));
+ makelabel.top("",z+(0,1));
+ makelabel.top("",z+(1,1)/sqrt2);
+ makelabel.top("",z+(1,-1)/sqrt2);
+ makelabel.top("",z-(1,1)/sqrt2);
+ makelabel.top("",z-(1,-1)/sqrt2);
+ enddef;
+
+def font_setup=
+define_pixels(u,tiny,axis,hheight,border);
+define_blacker_pixels(hair,thin,thick,rulethickness);
+pickup if tiny<.5: nullpen else: pencircle scaled tiny fi;
+tinypen:=savepen;
+currenttransform:=identity slanted slant yscaled aspect_ratio;
+enddef;
+
+def arrow(expr l)(suffix i,j) =
+ begingroup
+  save ang,leftpoint,rightpoint;
+  pair leftpoint,rightpoint;
+  ang=angle(z.i-z.j);
+  leftpoint-z.j=l*dir(ang-30);
+  rightpoint-z.j=l*dir(ang+30);
+  draw z.i--z.j;
+  draw leftpoint--z.j--rightpoint;
+ endgroup
+ enddef;
+
+def circ_arrow(expr l)(suffix i,j,k) =
+ begingroup
+  save ang,leftpoint,rightpoint;
+  pair leftpoint,rightpoint;
+  ang1=angle(z.i-z.k)+90; ang2=angle(z.j-z.k)+90;
+  leftpoint-z.j=l*dir(ang2-30+180);
+  rightpoint-z.j=l*dir(ang2+30+180);
+  draw z.i{dir ang1}..{dir ang2}z.j;
+  draw leftpoint--z.j--rightpoint;
+ endgroup
+ enddef;
+
+mode=proof; mode_setup;
+standardpen=savepen;
+
+% 4 points and a grid and two more points
+clear_all;
+pair offset; offset=(.5,.5);
+z1=(100,100)+offset; % A
+z2=(0,0)+offset; % B
+z3=(0,100)+offset; % C
+z4=(100,200)+offset; % D
+z5=(70,50)+offset; % (7, 5)
+z6=(-20,60)+offset; % (-2, 6)
+proofrulethickness .5;
+proofrule (z2-(0,5),(0,200)+offset+(0,5)); proofrule (z2-(5,0),(100,0)+offset+(5,0));
+makelabel.rt("A ",z1);
+makelabel.bot("B ",z2);
+makelabel.top("C ",z3);
+makelabel.rt("D ",z4);
+makelabel.top("(7,5) ",z5);
+makelabel.lft("(-2,6) ",z6);
+for k=1 upto 6: heavy_dot z[k]; endfor;
+pickup pencircle;
+for x=10 step 10 until 100: draw (x,-5)+offset..(x,205)+offset; endfor
+for y=10 step 10 until 200: draw (-5,y)+offset..(105,y)+offset; endfor
+showit;
+shipit;
+
+% An upright rectangle
+clear_all;
+pair offset; offset=(.5,.5);
+z1=(0,0)+offset;
+z2=(200,0)+offset;
+z3=(200,150)+offset;
+z4=(0,150)+offset;
+proofrulethickness .5;
+proofrule (z1,z2); proofrule (z2,z3);
+proofrule (z3,z4); proofrule (z4,z1);
+makelabel.bot("1 ",z1);
+makelabel.bot("2 ",z2);
+makelabel.top("3 ",z3);
+makelabel.top("4 ",z4);
+for k=1 upto 4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% An isosceles triangle
+clear_all;
+pair offset; offset=(.5,.5);
+z1=(0,0)+offset;
+z2=(100,0)+offset;
+z3=((x1+x2)/2,200)+offset;
+proofrulethickness .5;
+pickup pencircle;
+draw z1---z2---z3---cycle;
+makelabel.bot("1 ",z1);
+makelabel.bot("2 ",z2);
+makelabel.top("3 ",z3);
+for k=1 upto 3: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% A line and various points
+clear_all;
+pair offset; offset=(.5,.5);
+proofoffset(100,0);
+z1=(0,0)+offset;
+z2=(100,50)+offset;
+z3=.5[z1,z2]+offset;
+z4=-1[z1,z2]+offset;
+z5=2[z1,z2]+offset;
+proofrulethickness .5;
+pickup pencircle;
+draw z4---z5;
+makelabel.bot("1 (0) ",z1);
+makelabel.bot("2 (1) ",z2);
+makelabel.top("(.5) ",z3);
+makelabel.top("(-1) ",z4);
+makelabel.top("(2) ",z5);
+for k=1 upto 5: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% Another line and various points
+clear_all;
+pair offset; offset=(.5,.5);
+z1=(0,0)+offset;
+z2=(200,100)+offset;
+z3=.2[z1,z2]+offset;
+z4=.8[z1,z2]+offset;
+z5=(x3,y4);
+proofrulethickness .5;
+pickup pencircle;
+draw z1---z2; draw z3---z5; draw z4---z5;
+makelabel.lft("1 ",z1);
+makelabel.rt("2 ",z2);
+makelabel.rt("(.2) ",z3);
+makelabel.rt("(.8) ",z4);
+makelabel.top("3 ",z5);
+for k=1 upto 5: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% An example of the "shifted" transformation
+clear_all;
+pair offset; offset=(.5,.5);
+pair trans[]; trans1=(90,120); trans2=(90,0);
+z0=(0,0)+offset;
+z1=(15,40)+offset;
+z2=z1 shifted trans1;
+z3=z1 shifted trans2;
+proofrulethickness .5;
+pickup pencircle;
+arrow(10,1,2); arrow(10,1,3);
+makelabel.lft("0 ",z0);
+makelabel.bot("z1 ",z1);
+makelabel.top("z1 shifted (90,120) ",z2);
+makelabel.bot("z1 shifted (90,0) ",z3);
+for k=0 upto 3: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% An example of the "scaled" transformation
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(20,30)+offset;
+z2=((z1-offset) scaled 3)+offset;
+z3=((z1-offset) scaled 5)+offset;
+z4=((z1-offset) scaled-1)+offset;
+proofrulethickness .5;
+pickup pencircle;
+draw z4--z0--z1--z2--z3;
+makelabel.lft("0 ",z0);
+makelabel.lft("z1 ",z1);
+makelabel.bot("z1 scaled 3 ",z2);
+makelabel.top("z1 scaled 5 ",z3);
+makelabel.bot("z1 scaled -1 ",z4);
+for k=0 upto 4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% An example of the "xscaled" and "yscaled" transformations
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(15,40)+offset;
+z2=((z1-offset) xscaled 9)+offset;
+z3=((z1-offset) yscaled 4)+offset;
+z4=((z1-offset) xscaled 9 yscaled 4)+offset;
+proofrulethickness .5;
+pickup pencircle;
+draw z0--z1; draw z0--z2; draw z0--z3; draw z0--z4;
+makelabel.lft("0 ",z0);
+makelabel.lft("z1 ",z1);
+makelabel.top("z1 xscaled 9 ",z2);
+makelabel.bot("z1 yscaled 4 ",z3);
+makelabel.top("z1 xscaled 9 yscaled 4 ",z4);
+for k=0 upto 4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% An example of the "rotated" and "rotatedaround" transformations
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(30,80)+offset;
+z2=((z1-offset) rotated 60)+offset;
+z3=(120,180)+offset;
+z4=((z1-offset) rotatedaround (z3-offset,60))+offset;
+proofrulethickness .5;
+pickup pencircle;
+draw z0--z1; draw z0--z2; draw z3--z1; draw z3--z4;
+circ_arrow(10,1,2,0); circ_arrow(10,1,4,3);
+makelabel.lft("0 ",z0);
+makelabel.top("z1 ",z1);
+makelabel.bot("z1 rotated 60 ",z2);
+makelabel.top("z2 ",z3);
+makelabel.top("z1 rotatedaround (z2,60) ",z4);
+for k=0 upto 4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% An example of the "reflectedabout" transformation
+clear_all;
+proofoffset(50,0);
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(15,40)+offset;
+z0'=(80,120)+offset;
+z1'=(110,10)+offset;
+z2'=(-50,70)+offset;
+z3'=(30,100)+offset;
+z2=((z1-offset) reflectedabout (z0'-offset,z1'-offset))+offset;
+z3=((z1-offset) reflectedabout (z2'-offset,z3'-offset))+offset;
+proofrulethickness .5;
+pickup pencircle;
+draw z1--z2; draw z1--z3;
+draw (-.5)[z0',z1']--1.5[z0',z1']; draw (-.5)[z2',z3']--1.5[z2',z3'];
+makelabel.bot("0 ",z0);
+makelabel.bot("z1 ",z1);
+makelabel.top("z1 reflectedabout (z0',z1') ",z2);
+makelabel.top("z1 reflectedabout (z2',z3') ",z3);
+makelabel.rt("z0'",z0');
+makelabel.rt("z1'",z1');
+makelabel.bot("z2'",z2');
+makelabel.bot("z3'",z3');
+for k=0 upto 3: heavy_dot z[k]; heavy_dot z[k]'; endfor;
+showit;
+shipit;
+
+% A strange reflection
+clear_all;
+proofoffset(100,0);
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(100,50)+offset;
+z2' dotprod (z1-offset)=0;
+y2'=y1-ypart(offset); z3'=-z2';
+z2=z2'+offset; z3=z3'+offset;
+z4=((z1-offset) reflectedabout (z2',origin))+offset;
+proofrulethickness .5;
+pickup pencircle;
+draw z1--z4; draw z2--z3;
+makelabel.bot("0 ",z0);
+makelabel.top("(x, y) ",z1);
+makelabel.top("z1 ",z2);
+makelabel.bot("(-x, -y) = (x, y) reflectedabout (z1, (0, 0))",z4);
+for k=0,1,2,4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% A few examples of curves drawn by "draw"
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(0,100)+offset;
+z2=(100,100)+offset;
+z3=(200,100)+offset;
+z4=(200,0)+offset;
+z5=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0..z1..z2..z3..z4..z5;
+makelabel.bot("0 ",z0);
+makelabel.top("1 ",z1);
+makelabel.top("2 ",z2);
+makelabel.top("3 ",z3);
+makelabel.bot("4 ",z4);
+makelabel.bot("5 ",z5);
+for k=0 upto 4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(0,100)+offset;
+z2=(100,100)+offset;
+z3=(200,100)+offset;
+z4=(200,0)+offset;
+z5=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0..z1..z2..z5..z4..z3;
+makelabel.bot("0 ",z0);
+makelabel.top("1 ",z1);
+makelabel.top("2 ",z2);
+makelabel.top("3 ",z3);
+makelabel.bot("4 ",z4);
+makelabel.bot("5 ",z5);
+for k=0 upto 4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(0,100)+offset;
+z2=(100,100)+offset;
+z3=(200,100)+offset;
+z4=(200,0)+offset;
+z5=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0..z5..z2..z1;
+makelabel.bot("0 ",z0);
+makelabel.top("1 ",z1);
+makelabel.top("2 ",z2);
+makelabel.top("3 ",z3);
+makelabel.bot("4 ",z4);
+makelabel.bot("5 ",z5);
+for k=0 upto 4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(0,100)+offset;
+z2=(100,100)+offset;
+z3=(200,100)+offset;
+z4=(200,0)+offset;
+z5=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0..z5..z4..z2..z0;
+makelabel.bot("0 ",z0);
+makelabel.top("1 ",z1);
+makelabel.top("2 ",z2);
+makelabel.top("3 ",z3);
+makelabel.bot("4 ",z4);
+makelabel.bot("5 ",z5);
+for k=0 upto 4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(0,100)+offset;
+z2=(100,100)+offset;
+z3=(200,100)+offset;
+z4=(200,0)+offset;
+z5=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0..z5..z3..z4..z2..z1;
+makelabel.bot("0 ",z0);
+makelabel.top("1 ",z1);
+makelabel.top("2 ",z2);
+makelabel.top("3 ",z3);
+makelabel.bot("4 ",z4);
+makelabel.bot("5 ",z5);
+for k=0 upto 4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(0,100)+offset;
+z2=(100,100)+offset;
+z3=(200,100)+offset;
+z4=(200,0)+offset;
+z5=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0..z2..z4..z3..z5..z1;
+makelabel.bot("0 ",z0);
+makelabel.top("1 ",z1);
+makelabel.top("2 ",z2);
+makelabel.top("3 ",z3);
+makelabel.bot("4 ",z4);
+makelabel.bot("5 ",z5);
+for k=0 upto 4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% A nice loop. Doesn't it remind you of something? ;)
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+
+% The same loop, with labels
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.lft("1 ",z1);
+makelabel.top("2 ",z2);
+makelabel.bot("3 ",z3);
+for k=0 upto 3: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% The wrong loop, with labels
+clear_all;
+pair offset; offset=(.5,.5);
+path p;
+p=(0,0)..(50,100)..(50,200)..(50,100)..(100,0);
+z0=(0,0)+offset;
+z1=(directionpoint up of p)+offset;
+z2=(directionpoint down of p)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0..z1..z2..z3;
+makelabel.bot("0 ",z0);
+makelabel.lft("1 ",z1);
+makelabel.rt("2 ",z2);
+makelabel.bot("3 ",z3);
+for k=0 upto 3: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% Two examples with only a change of sense
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0{up}..{left}z1..{down}z2;
+makelabel.bot("0 ",z0);
+makelabel.top("1 ",z1);
+makelabel.bot("2 ",z2);
+for k=0 upto 2: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0{up}..{right}z1..{down}z2;
+makelabel.bot("0 ",z0);
+makelabel.top("1 ",z1);
+makelabel.bot("2 ",z2);
+for k=0 upto 2: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% A curve perpendicular to a line
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(100,100)+offset;
+z2=(50,60)+offset;
+z3=(120,10)+offset;
+z4=.5[z2,z3];
+proofrulethickness .5;
+pickup pencircle;
+draw z2--z3;
+pickup pencircle scaled 10;
+draw z0..{dir(angle(z3-z2)+90)}z4..z1;
+makelabel.bot("0 ",z0);
+makelabel.top("1 ",z1);
+makelabel.top("2 ",z2);
+makelabel.bot("3 ",z3);
+makelabel.rt(" 4",z4);
+for k=0 upto 4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% A closed-looking curve, but not really closed
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(0,100)+offset;
+z2=(100,100)+offset;
+z3=(200,100)+offset;
+z4=(200,0)+offset;
+z5=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0{right}..z5..z4..z2..{right}z0;
+makelabel.bot("0 ",z0);
+makelabel.top("1 ",z1);
+makelabel.top("2 ",z2);
+makelabel.top("3 ",z3);
+makelabel.bot("4 ",z4);
+makelabel.bot("5 ",z5);
+for k=0 upto 4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% The same curve, but really closed
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(0,100)+offset;
+z2=(100,100)+offset;
+z3=(200,100)+offset;
+z4=(200,0)+offset;
+z5=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0..z5..z4..z2..cycle;
+makelabel.bot("0 ",z0);
+makelabel.top("1 ",z1);
+makelabel.top("2 ",z2);
+makelabel.top("3 ",z3);
+makelabel.bot("4 ",z4);
+makelabel.bot("5 ",z5);
+for k=0 upto 4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% An 8-shaped curve
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(0,100)+offset;
+z2=(0,200)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0{right}..z1..z2{right}..z1..cycle;
+%draw z0..z1..z2..z1..cycle;
+makelabel.bot("0 ",z0);
+makelabel.lft("1 ",z1);
+makelabel.top("2 ",z2);
+for k=0 upto 2: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% An 8-shaped curve without middle point
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(0,200)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 10;
+draw z0{right}..z1{right}..cycle;
+makelabel.bot("0 ",z0);
+makelabel.top("2 ",z1);
+for k=0 upto 1: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% The closed curve, but thick
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(0,100)+offset;
+z2=(100,100)+offset;
+z3=(200,100)+offset;
+z4=(200,0)+offset;
+z5=(100,0)+offset;
+proofrulethickness .5;
+draw z0..z5..z4..z2..cycle;
+makelabel.bot("0 ",z0);
+makelabel.top("1 ",z1);
+makelabel.top("2 ",z2);
+makelabel.top("3 ",z3);
+makelabel.bot("4 ",z4);
+makelabel.bot("5 ",z5);
+for k=0 upto 4: heavy_dot z[k]; endfor;
+showit;
+shipit;
+
+% The loop again, but drawn with a small circular pen
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+
+% The loop again, but drawn with a small square pen
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pensquare;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+
+% Six identical loops drawn with different pens
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle scaled 20;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle xscaled 20 yscaled 5;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle yscaled 20 xscaled 5;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pensquare scaled 20;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pensquare xscaled 20 yscaled 5;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pensquare yscaled 20 xscaled 5;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+
+% Six identical loops drawn with the same pen
+% at various angles
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle xscaled 20 yscaled 5 rotated 30;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle xscaled 20 yscaled 5 rotated 45;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle xscaled 20 yscaled 5 rotated 60;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle xscaled 20 yscaled 5 rotated 120;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle xscaled 20 yscaled 5 rotated 135;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+
+clear_all;
+pair offset; offset=(.5,.5);
+z0=(0,0)+offset;
+z1=(50,100)+offset;
+z2=(50,200)+offset;
+z3=(100,0)+offset;
+proofrulethickness .5;
+pickup pencircle xscaled 20 yscaled 5 rotated 150;
+draw z0..z1..z2..z1..z3;
+makelabel.bot("0 ",z0);
+makelabel.bot("3 ",z3);
+heavy_dot z0; heavy_dot z3;
+showit;
+shipit;
+end
