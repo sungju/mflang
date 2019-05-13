@@ -103,6 +103,8 @@ class Metafont(Parser):
         print(arg_list)
 
 
+    complex_result = 0
+
     char_list = { }
     current_char = None
 
@@ -427,23 +429,30 @@ class Metafont(Parser):
         logging.debug("p_argument %s" % (p[1]))
 
     def p_statement_assign(self, p):
-        """statement : ID EQUALS complex_expression"""
+        """statement : ID EQUALS complex_expression SEMI"""
         self.names[p[1]] = p[3]
         logging.debug("statement:ID=expression;")
         print("%s %s" % (p[1], p[3]))
         logging.debug("p_statement_assign")
 
     def p_statement_expr(self, p):
-        """statement : complex_expression"""
+        """statement : complex_expression SEMI"""
         p[0] = p[1]
         logging.debug("statement:expression;")
         print("%s %s" % (p[0], p[1]))
         logging.debug("p_statement_expr")
 
+    def p_statement_complex(self, p):
+        """statement : complex_expression EQUALS complex_expression SEMI"""
+        logging.debug("statement : complex_expression=complex_expression;")
+        print ("%s %s" % (p[0], p[2]))
+        logging.debug("p_statement_complex")
+
     def p_complex_expression(self, p):
         """complex_expression : ID EQUALS complex_expression
                                 | ID EQUALS expression
                                 | expression"""
+
         if len(p) > 3:
             pattern = re.compile(self.t_EQUALS)
             if (pattern.match(p[2])):
@@ -452,6 +461,8 @@ class Metafont(Parser):
             p[0] = self.names[p[1]]
         else:
             p[0] = p[1]
+
+        self.complex_result = p[0]
 
         logging.debug("p_complex_expression : result = %s from %s" % (p[0], p[1]))
 
@@ -511,6 +522,12 @@ class Metafont(Parser):
 
             print(p[0])
         except:
+            if self.complex_result != None:
+                p[0] = self.complex_result
+                print("%s=%d" % (p[1], p[0]))
+                self.complex_result = None
+                return
+
             print("Undefined name '%s'" % p[1])
             print(self.names)
             p[0] = 0
